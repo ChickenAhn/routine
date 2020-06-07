@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:routine/models/models.dart';
+import 'package:routine/providers/todo_list_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -108,15 +110,20 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildTodoList() {
-    return ListView.separated(
-      physics: NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(0),
-      shrinkWrap: true,
-      itemCount: 24,
-      itemBuilder: (context, index) => TodoItem(
-        todo: Todo(id: 'id', title: '플러터 공부하기', isCompleted: false),
-      ),
-      separatorBuilder: (context, index) => SizedBox(height: 12),
+    return Consumer<TodoListProvider>(
+      builder: (_, todoList, child) {
+        print(todoList.count);
+        return ListView.separated(
+          physics: NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(0),
+          shrinkWrap: true,
+          itemCount: 24,
+          itemBuilder: (context, index) => TodoItem(
+            todo: Todo(id: 'id', title: '플러터 공부하기', isCompleted: false),
+          ),
+          separatorBuilder: (context, index) => SizedBox(height: 12),
+        );
+      },
     );
   }
 }
