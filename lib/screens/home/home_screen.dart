@@ -4,16 +4,6 @@ import 'package:routine/models/models.dart';
 import 'package:routine/providers/todo_list_provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key key}) : super(key: key);
-  // TodoList todoList;
-
-  /// header
-  ///   오늘, 날짜 포맷팅
-  /// floating button
-  /// empty image
-  /// listview
-  /// bottom sheet
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +15,6 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               // _buildHeader(),
-              // _buildPlaceholder(), // conditional
               _buildTodoList(),
             ],
           ),
@@ -111,18 +100,27 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildTodoList() {
     return Consumer<TodoListProvider>(
-      builder: (_, todoList, child) {
-        print(todoList.count);
-        return ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(0),
-          shrinkWrap: true,
-          itemCount: 24,
-          itemBuilder: (context, index) => TodoItem(
-            todo: Todo(id: 'id', title: '플러터 공부하기', isCompleted: false),
-          ),
-          separatorBuilder: (context, index) => SizedBox(height: 12),
-        );
+      builder: (_, todoListProvider, child) {
+        if (!todoListProvider.isLoading) {
+          final List<Todo> todos = todoListProvider.todoList?.todos;
+          if (todos != null) {
+            return ListView.separated(
+              physics: NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(0),
+              shrinkWrap: true,
+              itemCount: todos.length,
+              itemBuilder: (context, index) {
+                Todo todo = todos[index];
+                return TodoItem(
+                  todo: todo,
+                );
+              },
+              separatorBuilder: (context, index) => SizedBox(height: 12),
+            );
+          }
+          return Center(child: _buildPlaceholder());
+        }
+        return Container();
       },
     );
   }
@@ -138,7 +136,8 @@ class CreateTodoForm extends StatefulWidget {
 class _CreateTodoFormState extends State<CreateTodoForm> {
   TextEditingController textInputController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-//
+  TodoListProvider todoListProvider;
+
   @override
   void initState() {
     super.initState();
@@ -152,6 +151,7 @@ class _CreateTodoFormState extends State<CreateTodoForm> {
 
   @override
   Widget build(BuildContext context) {
+    todoListProvider = Provider.of<TodoListProvider>(context);
     return Form(
       key: _formKey,
       child: Row(
@@ -180,7 +180,9 @@ class _CreateTodoFormState extends State<CreateTodoForm> {
               child: InkWell(
                 onTap: () {
                   if (textInputController.text.isNotEmpty) {
-                    print("ㅇㅇ");
+                    // textInputController.text -> createTodo
+                    todoListProvider.createTodo(textInputController.text);
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Padding(
@@ -213,7 +215,10 @@ class _TodoItemState extends State<TodoItem> {
       child: ListTile(
         trailing: widget.todo.isCompleted
             ? IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Provider.of<TodoListProvider>(context, listen: false)
+                      .deleteTodo(widget.todo);
+                },
                 // highlightColor: Colors.transparent,
                 // splashColor: Colors.transparent,
                 icon: Container(
@@ -233,11 +238,8 @@ class _TodoItemState extends State<TodoItem> {
         leading: Checkbox(
           value: widget.todo.isCompleted,
           onChanged: (bool value) {
-            setState(
-              () {
-                widget.todo.isCompleted = !widget.todo.isCompleted;
-              },
-            );
+            Provider.of<TodoListProvider>(context, listen: false)
+                .toggleTodo(widget.todo);
           },
         ),
         title: Text(

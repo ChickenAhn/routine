@@ -15,10 +15,10 @@ class TodoList {
   String date;
   List<Todo> todos = [];
 
-  Todo addTodo(Todo newTodo) {
-    todos.add(newTodo);
-    return newTodo;
-  }
+  // Todo addTodo(Todo newTodo) {
+  //   todos.add(newTodo);
+  //   return newTodo;
+  // }
 
   factory TodoList.fromJson(Map<String, dynamic> json) =>
       _$TodoListFromJson(json);

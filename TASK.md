@@ -34,7 +34,11 @@
 
 ## 두번째 그룹 스터디 진행
 
-- Provider
+- Provider 패턴 적용하기
+
   - TodoListProvider 생성
-  - TodoListService 연결
-  - CRUD method 생성
+    - CRUD method 생성
+    - TodoListService 연결
+  - TodoListProvider Widget에 적용
+
+- 날짜별 Todolist 확인할 수 있는 UI 구현
