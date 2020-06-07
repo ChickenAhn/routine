@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:routine/models/models.dart';
 import 'package:routine/services/todo_service.dart';
+import 'package:uuid/uuid.dart';
 
 abstract class BaseTodoListProvider {
   // todo list의 CRUD
@@ -42,9 +43,8 @@ class TodoListProvider with ChangeNotifier {
   /// createTodo는 해당 날짜에 할 일(Todo)을 추가하는 method입니다.
   /// "할일"
   void createTodo(String title) async {
-    count++;
     _todoList.todos
-        .add(new Todo(id: 'todo$count', title: title, isCompleted: false));
+        .add(new Todo(id: '${Uuid().v1()}', title: title, isCompleted: false));
     await _todoService.updateTodoList(_todoList);
     notifyListeners();
   }

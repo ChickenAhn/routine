@@ -41,4 +41,8 @@
     - TodoListService 연결
   - TodoListProvider Widget에 적용
 
+---
+
+## 세번째 그룹 스터디 진행
+
 - 날짜별 Todolist 확인할 수 있는 UI 구현
